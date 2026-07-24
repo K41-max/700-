@@ -41,7 +41,7 @@
       touch-action: manipulation;
     }
 
-    /* GitHub風 スライドアウト・サイドバー */
+    /* GitHub風 サイドバー */
     .sidebar {
       width: 280px;
       background: var(--sidebar-bg);
@@ -222,7 +222,7 @@
     button.btn-secondary:hover { background: #e2e8f0; }
     button.btn-danger { background: #ef4444; color: white; }
 
-    /* 並び替えエリア (ドラッグ＆ドロップ対応スタイル) */
+    /* 並び替えエリア */
     .word-pool, .answer-box {
       display: flex;
       flex-wrap: wrap;
@@ -255,7 +255,7 @@
       font-size: 0.95rem;
       font-weight: 500;
       user-select: none;
-      touch-action: none; /* スマホスクロールと干渉させない */
+      touch-action: none; /* スクロールとドラッグの衝突回避 */
       box-shadow: var(--shadow-sm);
       transition: transform 0.15s, opacity 0.15s, background-color 0.15s;
     }
@@ -263,17 +263,13 @@
     .word-btn:active { cursor: grabbing; }
 
     .word-btn.dragging {
-      opacity: 0.3;
+      opacity: 0.2;
       transform: scale(0.95);
-    }
-
-    .word-btn.target-hover {
-      border-left: 4px solid var(--primary);
     }
 
     .answer-box .word-btn { background: #e0e7ff; border-color: #c7d2fe; color: #3730a3; }
 
-    /* スマホで指ドラッグ中の追従用ゴースト要素 */
+    /* 指ドラッグ中の追従ゴースト */
     .touch-ghost {
       position: fixed;
       pointer-events: none;
@@ -416,11 +412,9 @@
           </div>
           <div id="reorderJa" class="ja-text"></div>
           
-          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">💡 指やマウスでドラッグ＆ドロップして並び替えられます（タップ移動も可）</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">💡 タップで素早く移動、長押しスワイプで自由に並び替えができます</div>
           
-          <!-- 解答エリア -->
           <div id="answerBox" class="answer-box"></div>
-          <!-- 単語プール -->
           <div id="wordPool" class="word-pool"></div>
 
           <div class="btn-group">
@@ -497,9 +491,9 @@
   let reorderIndex = 0;
   let compIndex = 0;
 
-  // 並び替え用配列データ
-  let poolWords = [];     // まだ選択していない単語
-  let selectedWords = []; // 解答枠に入っている単語
+  // 単語配列
+  let poolWords = [];
+  let selectedWords = [];
 
   // --- 初期化 ---
   const sidebarDropzone = document.getElementById('sidebarDropzone');
@@ -591,7 +585,7 @@
     startCompSession();
   }
 
-  // --- スコア・誤答計算 ---
+  // --- スコア管理 ---
   function getStatKey(item) { return `${activeFileId}_${item.id}`; }
   function recordWrongAnswer(item) {
     const key = getStatKey(item);
@@ -735,8 +729,8 @@
     }
   }
 
-  // --- ② 並び替えテスト（タッチ＆マウスマウスドラッグ対応） ---
-  let activeDragInfo = null; // { source: 'pool'|'answer', index: number }
+  // --- ② 並び替えテスト（タップ＆指ドラッグ自動判定） ---
+  let activeDragInfo = null;
   let touchGhost = null;
 
   function startReorderSession() {
@@ -760,7 +754,6 @@
     document.getElementById('reorderJa').innerText = q.ja;
     document.getElementById('reorderResult').style.display = 'none';
 
-    // 単語をシャッフル
     const words = q.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(" ");
     poolWords = [...words].sort(() => Math.random() - 0.5);
     selectedWords = [];
@@ -791,7 +784,7 @@
     });
   }
 
-  // ドラッグ＆ドロップ ＋ タップ対応のボタン生成
+  // タップとドラッグを高度に自動判定するボタン作成
   function createWordButton(word, source, index) {
     const btn = document.createElement('button');
     btn.className = 'word-btn';
@@ -800,8 +793,8 @@
     btn.dataset.index = index;
     btn.draggable = true;
 
-    // --- 1. タップ(クリック)移動 ---
-    btn.onclick = () => {
+    // 移動ロジック
+    const doMove = () => {
       if (source === 'pool') {
         const moved = poolWords.splice(index, 1)[0];
         selectedWords.push(moved);
@@ -812,7 +805,17 @@
       renderReorderUI();
     };
 
-    // --- 2. PC マウスドラッグイベント ---
+    // --- PC用 クリック判定 ---
+    btn.addEventListener('click', (e) => {
+      // タッチからの偽click（発火重複）を防止
+      if (e.detail === 0 || btn.dataset.touchHandled === 'true') {
+        delete btn.dataset.touchHandled;
+        return;
+      }
+      doMove();
+    });
+
+    // --- PC用 ドラッグ判定 ---
     btn.addEventListener('dragstart', (e) => {
       activeDragInfo = { source, index };
       btn.classList.add('dragging');
@@ -824,42 +827,60 @@
       activeDragInfo = null;
     });
 
-    // --- 3. スマホ タッチ（指ドラッグ）イベント ---
+    // --- スマホ用 タッチ処理 (タップ / ドラッグの完全自動切り替え) ---
+    let startX = 0;
+    let startY = 0;
+    let isDragging = false;
+
     btn.addEventListener('touchstart', (e) => {
       const touch = e.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      isDragging = false;
       activeDragInfo = { source, index };
-
-      // ゴースト生成
-      touchGhost = btn.cloneNode(true);
-      touchGhost.classList.add('touch-ghost');
-      document.body.appendChild(touchGhost);
-      updateGhostPos(touch);
-
-      btn.classList.add('dragging');
     }, { passive: true });
 
     btn.addEventListener('touchmove', (e) => {
-      if (!touchGhost) return;
       const touch = e.touches[0];
-      e.preventDefault(); // 画面スクロール防止
-      updateGhostPos(touch);
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
 
-      // 指下の要素をチェック
-      const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
-      highlightDropZone(targetEl);
+      // 10px以上動いた時だけ「ドラッグ操作」とみなす
+      if (!isDragging && (Math.abs(dx) > 10 || Math.abs(dy) > 10)) {
+        isDragging = true;
+        btn.classList.add('dragging');
+
+        // ドラッグ中のゴースト生成
+        touchGhost = btn.cloneNode(true);
+        touchGhost.classList.add('touch-ghost');
+        document.body.appendChild(touchGhost);
+      }
+
+      if (isDragging && touchGhost) {
+        if (e.cancelable) e.preventDefault(); // 画面スクロール停止
+        updateGhostPos(touch);
+        const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+        highlightDropZone(targetEl);
+      }
     }, { passive: false });
 
     btn.addEventListener('touchend', (e) => {
-      if (!touchGhost) return;
-      const touch = e.changedTouches[0];
-      const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+      if (isDragging) {
+        // ドラッグして放した場合
+        const touch = e.changedTouches[0];
+        const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+        removeGhost();
+        btn.classList.remove('dragging');
+        clearDropHighlights();
 
-      removeGhost();
-      btn.classList.remove('dragging');
-      clearDropHighlights();
-
-      if (targetEl && activeDragInfo) {
-        executeDrop(targetEl, activeDragInfo);
+        if (targetEl && activeDragInfo) {
+          executeDrop(targetEl, activeDragInfo);
+        }
+      } else {
+        // あまり動いていなければ「タップ」とみなす
+        btn.dataset.touchHandled = 'true';
+        removeGhost();
+        doMove();
       }
       activeDragInfo = null;
     });
@@ -880,7 +901,6 @@
     touchGhost = null;
   }
 
-  // コンテナへのHTML5ドラッグオーバー設定
   function setupContainerEvents(containerId) {
     const container = document.getElementById(containerId);
     container.addEventListener('dragover', (e) => {
@@ -913,14 +933,12 @@
     document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
   }
 
-  // ドラッグ＆ドロップ実行処理
   function executeDrop(targetEl, dragInfo) {
     const targetBox = targetEl.closest('#answerBox, #wordPool');
     const targetBtn = targetEl.closest('.word-btn');
 
     if (!targetBox && !targetBtn) return;
 
-    // 元配列から取り出し
     let word = null;
     if (dragInfo.source === 'pool') {
       word = poolWords.splice(dragInfo.index, 1)[0];
@@ -928,7 +946,6 @@
       word = selectedWords.splice(dragInfo.index, 1)[0];
     }
 
-    // ドロップ先へ挿入
     if (targetBtn && targetBtn.dataset) {
       const toSource = targetBtn.dataset.source;
       const toIndex = parseInt(targetBtn.dataset.index, 10);
