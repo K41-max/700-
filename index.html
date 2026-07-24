@@ -13,14 +13,11 @@
     :root {
       --primary: #4f46e5;
       --primary-hover: #4338ca;
-      --primary-light: #eeef2;
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border-color: #e2e8f0;
-      --success: #10b981;
-      --error: #ef4444;
       --radius-lg: 16px;
       --radius-md: 10px;
       --radius-sm: 6px;
@@ -354,9 +351,10 @@
       <div class="drop-icon">
         <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
       </div>
-      <div class="drop-title">JSONファイルをドラッグ＆ドロップ</div>
-      <div class="drop-sub">またはクリックしてファイルを選択</div>
-      <input type="file" id="jsonFile" accept=".json" style="display: none;">
+      <div class="drop-title">ファイルをドラッグ＆ドロップ</div>
+      <div class="drop-sub">またはクリックしてファイルを選択 (.json / .txt)</div>
+      <!-- accept属性に .txt を追加 -->
+      <input type="file" id="jsonFile" accept=".json,.txt" style="display: none;">
     </div>
   </div>
 
@@ -449,8 +447,9 @@
 
   // ファイル読み込み処理
   function handleFile(file) {
-    if (!file.name.endsWith('.json')) {
-      alert('JSONファイルを選択してください。');
+    const isJsonOrTxt = file.name.endsWith('.json') || file.name.endsWith('.txt');
+    if (!isJsonOrTxt) {
+      alert('JSON形式のファイル（.json または .txt）を選択してください。');
       return;
     }
 
@@ -462,10 +461,10 @@
           currentData = data;
           startApp();
         } else {
-          alert('有効なデータが含まれていないJSONファイルです。');
+          alert('有効なデータが含まれていません。JSON形式の配列データになっているか確認してください。');
         }
       } catch (err) {
-        alert('JSONファイルの読み込みに失敗しました。フォーマットを確認してください。');
+        alert('ファイルの読み込みに失敗しました。中身が正しいJSON形式になっているか確認してください。');
       }
     };
     reader.readAsText(file);
