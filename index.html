@@ -7,6 +7,7 @@
   <style>
     :root {
       --primary: #4f46e5;
+      --primary-hover: #4338ca;
       --bg: #f3f4f6;
       --card: #ffffff;
       --text: #1f2937;
@@ -20,23 +21,59 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
     }
     .container {
       max-width: 700px;
       width: 100%;
     }
-    h1 { text-align: center; color: var(--primary); }
+    h1 { text-align: center; color: var(--primary); margin-bottom: 24px; }
     
-    /* 設定・アップロードエリア */
-    .upload-section {
+    /* 一番最初のドラッグ＆ドロップ画面 */
+    .drop-zone {
       background: var(--card);
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      border: 3px dashed #a5b4fc;
+      border-radius: 12px;
+      padding: 70px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      margin-top: 30px;
+    }
+    .drop-zone.dragover {
+      background: #e0e7ff;
+      border-color: var(--primary);
+      transform: scale(1.02);
+    }
+    .drop-icon {
+      font-size: 56px;
+      margin-bottom: 16px;
+      color: var(--primary);
+    }
+    .drop-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .drop-sub {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+
+    /* メイン画面ヘッダー */
+    .app-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 15px;
+    }
+    .data-info {
+      font-size: 0.95rem;
+      color: #4b5563;
+      font-weight: bold;
     }
 
     /* タブ切り替え */
@@ -53,6 +90,7 @@
       cursor: pointer;
       border-radius: 6px;
       font-weight: bold;
+      transition: background 0.2s;
     }
     .tab-btn.active {
       background: var(--primary);
@@ -78,9 +116,13 @@
       padding: 8px 16px;
       border-radius: 6px;
       cursor: pointer;
+      font-weight: bold;
     }
     button.btn:hover { opacity: 0.9; }
-    textarea, input[type="text"] {
+    button.btn-secondary {
+      background: #6b7280;
+    }
+    textarea {
       width: 100%;
       padding: 10px;
       box-sizing: border-box;
@@ -111,7 +153,7 @@
       cursor: pointer;
       font-size: 1rem;
     }
-    .result-msg { font-weight: bold; margin-top: 10px; }
+    .result-msg { font-weight: bold; margin-top: 10px; white-space: pre-wrap; }
     .correct { color: #16a34a; }
     .incorrect { color: #dc2626; }
   </style>
@@ -121,111 +163,169 @@
 <div class="container">
   <h1>English Learning Hub</h1>
 
-  <!-- JSONデータ読み込み -->
-  <div class="upload-section">
-    <label for="jsonFile"><strong>JSONデータをアップロード:</strong></label>
-    <input type="file" id="jsonFile" accept=".json">
-  </div>
-
-  <!-- タブナビゲーション -->
-  <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('memorize')">① 暗記＆音声</button>
-    <button class="tab-btn" onclick="switchTab('reorder')">② 並び替え</button>
-    <button class="tab-btn" onclick="switchTab('composition')">③ 英作文</button>
-  </div>
-
-  <!-- ① 暗記・一覧・音声モード -->
-  <div id="memorizeTab" class="tab-content">
-    <div id="listContainer"></div>
-  </div>
-
-  <!-- ② 並び替え問題モード -->
-  <div id="reorderTab" class="tab-content" style="display:none;">
-    <div class="card">
-      <div id="reorderJa" class="ja-text">データを選択・アップロードしてください</div>
-      <div id="answerBox" class="answer-box"></div>
-      <div id="wordPool" class="word-pool"></div>
-      <button class="btn" onclick="checkReorder()">判定する</button>
-      <button class="btn" onclick="nextReorderQuestion()" style="background:#6b7280;">次の問題</button>
-      <div id="reorderResult" class="result-msg"></div>
+  <!-- ① 一番最初のドラッグ＆ドロップ領域 -->
+  <div id="uploadScreen">
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-icon">📁</div>
+      <div class="drop-title">ここにJSONファイルをドラッグ＆ドロップ</div>
+      <div class="drop-sub">またはクリックしてファイルを選択</div>
+      <input type="file" id="jsonFile" accept=".json" style="display: none;">
     </div>
   </div>
 
-  <!-- ③ 英作文モード -->
-  <div id="compositionTab" class="tab-content" style="display:none;">
-    <div class="card">
-      <div id="compJa" class="ja-text">データを選択・アップロードしてください</div>
-      <textarea id="compInput" rows="3" placeholder="ここに英文を入力してください..."></textarea>
-      <button class="btn" onclick="checkComposition()">答え合わせ</button>
-      <button class="btn" onclick="playAudio(currentData[currentCompIndex].en)">音声を聞く</button>
-      <button class="btn" onclick="nextCompQuestion()" style="background:#6b7280;">次の問題</button>
-      <div id="compResult" class="result-msg"></div>
+  <!-- ② ファイル読み込み後の学習画面 -->
+  <div id="mainApp" style="display: none;">
+    <div class="app-header">
+      <span class="data-info" id="dataInfo">全 0 問</span>
+      <button class="btn btn-secondary" onclick="resetApp()">← 別のファイルを読み込む</button>
+    </div>
+
+    <!-- タブナビゲーション -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('memorize', event)">① 暗記＆音声</button>
+      <button class="tab-btn" onclick="switchTab('reorder', event)">② 並び替え</button>
+      <button class="tab-btn" onclick="switchTab('composition', event)">③ 英作文</button>
+    </div>
+
+    <!-- ① 暗記・一覧・音声モード -->
+    <div id="memorizeTab" class="tab-content">
+      <div id="listContainer"></div>
+    </div>
+
+    <!-- ② 並び替え問題モード -->
+    <div id="reorderTab" class="tab-content" style="display:none;">
+      <div class="card">
+        <div id="reorderJa" class="ja-text"></div>
+        <div id="answerBox" class="answer-box"></div>
+        <div id="wordPool" class="word-pool"></div>
+        <button class="btn" onclick="checkReorder()">判定する</button>
+        <button class="btn btn-secondary" onclick="nextReorderQuestion()">次の問題</button>
+        <div id="reorderResult" class="result-msg"></div>
+      </div>
+    </div>
+
+    <!-- ③ 英作文モード -->
+    <div id="compositionTab" class="tab-content" style="display:none;">
+      <div class="card">
+        <div id="compJa" class="ja-text"></div>
+        <textarea id="compInput" rows="3" placeholder="ここに英文を入力してください..."></textarea>
+        <button class="btn" onclick="checkComposition()">答え合わせ</button>
+        <button class="btn" onclick="playAudio(currentData[currentCompIndex].en)">音声を聞く</button>
+        <button class="btn btn-secondary" onclick="nextCompQuestion()">次の問題</button>
+        <div id="compResult" class="result-msg"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
-  // 初期サンプルデータ（アップロードがなくても動くように一部保持）
-  let currentData = [
-    { id: 1, en: "My house is only five minutes' walk from the station.", ja: "私の家は駅から、ほんの5分の歩行 (所)です。" },
-    { id: 2, en: "My watch may be one or two minutes fast.", ja: "私の時計は1、2分早いかもしれない。" }
-  ];
-
+  let currentData = [];
   let currentReorderIndex = 0;
   let currentCompIndex = 0;
   let selectedWords = [];
 
+  const dropZone = document.getElementById('dropZone');
+  const jsonFileInput = document.getElementById('jsonFile');
+
+  // ドラッグ＆ドロップイベントの制御
+  dropZone.addEventListener('click', () => jsonFileInput.click());
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+  });
+
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      handleFile(files[0]);
+    }
+  });
+
+  jsonFileInput.addEventListener('change', (e) => {
+    if (e.target.files.length > 0) {
+      handleFile(e.target.files[0]);
+    }
+  });
+
+  // ファイル読み込み処理
+  function handleFile(file) {
+    if (!file.name.endsWith('.json')) {
+      alert('JSONファイルを選択してください。');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      try {
+        const data = JSON.parse(evt.target.result);
+        if (Array.isArray(data) && data.length > 0) {
+          currentData = data;
+          startApp();
+        } else {
+          alert('有効なデータが含まれていないJSONファイルです。');
+        }
+      } catch (err) {
+        alert('JSONファイルの読み込みに失敗しました。フォーマットを確認してください。');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  // メイン画面の開始処理
+  function startApp() {
+    document.getElementById('uploadScreen').style.display = 'none';
+    document.getElementById('mainApp').style.display = 'block';
+    document.getElementById('dataInfo').innerText = `読み込み中: 全 ${currentData.length} 問`;
+
+    currentReorderIndex = 0;
+    currentCompIndex = 0;
+
+    renderList();
+    loadReorderQuestion(0);
+    loadCompQuestion(0);
+  }
+
+  // リセット（ドラッグ＆ドロップ画面に戻る）
+  function resetApp() {
+    document.getElementById('mainApp').style.display = 'none';
+    document.getElementById('uploadScreen').style.display = 'block';
+    jsonFileInput.value = '';
+  }
+
   // 音声読み上げ機能 (Web Speech API)
   function playAudio(text) {
     if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel(); // 前の音声をクリア
+      window.speechSynthesis.cancel();
       const uttr = new SpeechSynthesisUtterance(text);
       uttr.lang = 'en-US';
-      uttr.rate = 0.9; // 速度（少しゆっくり）
+      uttr.rate = 0.9;
       window.speechSynthesis.speak(uttr);
     } else {
       alert("お使いのブラウザは音声読み上げに対応していません。");
     }
   }
 
-  // JSONファイル読み込み処理
-  document.getElementById('jsonFile').addEventListener('change', function(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = function(evt) {
-      try {
-        const data = JSON.parse(evt.target.result);
-        if (Array.isArray(data)) {
-          currentData = data;
-          alert(`データを読み込みました！（全${data.length}問）`);
-          renderList();
-          loadReorderQuestion(0);
-          loadCompQuestion(0);
-        }
-      } catch (err) {
-        alert("JSONファイルの形式が正しくありません。");
-      }
-    };
-    reader.readAsText(file);
-  });
-
   // タブ切り替え
-  function switchTab(tabName) {
+  function switchTab(tabName, evt) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
     
+    if (evt && evt.target) evt.target.classList.add('active');
+
     if (tabName === 'memorize') {
       document.getElementById('memorizeTab').style.display = 'block';
-      event.target.classList.add('active');
     } else if (tabName === 'reorder') {
       document.getElementById('reorderTab').style.display = 'block';
-      event.target.classList.add('active');
       loadReorderQuestion(currentReorderIndex);
     } else if (tabName === 'composition') {
       document.getElementById('compositionTab').style.display = 'block';
-      event.target.classList.add('active');
       loadCompQuestion(currentCompIndex);
     }
   }
@@ -255,7 +355,7 @@
     document.getElementById('reorderResult').innerText = '';
     selectedWords = [];
 
-    // 単語をシャッフル
+    // 単語を分解してシャッフル
     const words = q.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(" ");
     const shuffled = [...words].sort(() => Math.random() - 0.5);
 
@@ -290,7 +390,6 @@
       btn.innerText = word;
       btn.onclick = () => {
         selectedWords.splice(idx, 1);
-        // 簡単にするためリセット再読み込み的な挙動
         renderAnswerBox();
       };
       box.appendChild(btn);
@@ -308,7 +407,7 @@
       playAudio(currentData[currentReorderIndex].en);
     } else {
       resDiv.className = 'result-msg incorrect';
-      resDiv.innerText = `❌ 不正解... 正解: ${currentData[currentReorderIndex].en}`;
+      resDiv.innerText = `❌ 不正解... 正解:\n${currentData[currentReorderIndex].en}`;
     }
   }
 
@@ -344,9 +443,6 @@
   function nextCompQuestion() {
     loadCompQuestion(currentCompIndex + 1);
   }
-
-  // 初期化
-  renderList();
 </script>
 
 </body>
