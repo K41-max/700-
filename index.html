@@ -3,64 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>英語学習アプリ - 700選トレーナー</title>
+  <title>English Sentence Learning App</title>
+  <!-- Google Fonts: Inter & Noto Sans JP -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  
   <style>
     :root {
       --primary: #4f46e5;
       --primary-hover: #4338ca;
-      --bg: #f3f4f6;
-      --card: #ffffff;
-      --text: #1f2937;
+      --primary-light: #eeef2;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --success: #10b981;
+      --error: #ef4444;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --radius-sm: 6px;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 25px -5px rgb(0 0 0 / 0.08), 0 8px 10px -6px rgb(0 0 0 / 0.04);
     }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
+
+    * {
+      box-sizing: border-box;
       margin: 0;
-      padding: 20px;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      min-height: 100vh;
-      box-sizing: border-box;
+      padding: 40px 20px;
+      line-height: 1.6;
     }
+
     .container {
-      max-width: 700px;
+      max-width: 720px;
       width: 100%;
     }
-    h1 { text-align: center; color: var(--primary); margin-bottom: 24px; }
-    
-    /* 一番最初のドラッグ＆ドロップ画面 */
-    .drop-zone {
-      background: var(--card);
-      border: 3px dashed #a5b4fc;
-      border-radius: 12px;
-      padding: 70px 20px;
+
+    header {
       text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      margin-top: 30px;
+      margin-bottom: 32px;
     }
-    .drop-zone.dragover {
-      background: #e0e7ff;
-      border-color: var(--primary);
-      transform: scale(1.02);
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
     }
-    .drop-icon {
-      font-size: 56px;
-      margin-bottom: 16px;
+
+    h1 span {
       color: var(--primary);
     }
-    .drop-title {
-      font-size: 1.25rem;
-      font-weight: bold;
-      margin-bottom: 8px;
-      color: var(--text);
+
+    /* ドラッグ＆ドロップ画面 */
+    .drop-zone {
+      background: var(--card-bg);
+      border: 2px dashed #cbd5e1;
+      border-radius: var(--radius-lg);
+      padding: 60px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: var(--shadow-sm);
+      margin-top: 10px;
     }
+
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--primary);
+      background-color: #f1f5f9;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .drop-icon {
+      width: 64px;
+      height: 64px;
+      background: #e0e7ff;
+      color: var(--primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 28px;
+    }
+
+    .drop-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
     .drop-sub {
-      font-size: 0.9rem;
-      color: #6b7280;
+      font-size: 0.875rem;
+      color: var(--text-muted);
     }
 
     /* メイン画面ヘッダー */
@@ -68,106 +118,243 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
-    }
-    .data-info {
-      font-size: 0.95rem;
-      color: #4b5563;
-      font-weight: bold;
-    }
-
-    /* タブ切り替え */
-    .tabs {
-      display: flex;
-      gap: 10px;
       margin-bottom: 20px;
     }
-    .tab-btn {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      background: #e5e7eb;
-      cursor: pointer;
-      border-radius: 6px;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-    .tab-btn.active {
-      background: var(--primary);
-      color: white;
+
+    .data-badge {
+      background: #e0e7ff;
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
     }
 
-    /* カード・表示エリア */
-    .card {
-      background: var(--card);
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      margin-bottom: 15px;
+    /* ピル型タブ */
+    .tabs {
+      display: flex;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+      gap: 4px;
     }
-    .ja-text { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; }
-    .en-text { font-size: 1.2rem; color: #374151; margin-bottom: 15px; }
-    
-    /* ボタン・入力フォーム */
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* カードデザイン */
+    .card {
+      background: var(--card-bg);
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      border: 1px solid var(--border-color);
+      margin-bottom: 20px;
+      transition: all 0.2s ease;
+    }
+
+    .q-number {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--primary);
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    .ja-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .en-text {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #334155;
+      margin-bottom: 20px;
+      line-height: 1.5;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ボタン類 */
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
     button.btn {
       background: var(--primary);
       color: white;
       border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      font-weight: bold;
-    }
-    button.btn:hover { opacity: 0.9; }
-    button.btn-secondary {
-      background: #6b7280;
-    }
-    textarea {
-      width: 100%;
-      padding: 10px;
-      box-sizing: border-box;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      font-size: 1rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: var(--shadow-sm);
     }
 
-    /* 並び替え用ブロック */
+    button.btn:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    button.btn-secondary {
+      background: #f1f5f9;
+      color: var(--text-main);
+      box-shadow: none;
+      border: 1px solid var(--border-color);
+    }
+
+    button.btn-secondary:hover {
+      background: #e2e8f0;
+      color: var(--text-main);
+    }
+
+    button.btn-audio {
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      box-shadow: none;
+    }
+
+    button.btn-audio:hover {
+      background: #dcfce7;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 14px;
+      box-sizing: border-box;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      margin-bottom: 14px;
+      font-size: 1.05rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s ease;
+      outline: none;
+      resize: vertical;
+    }
+
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    /* 並び替えエリア */
     .word-pool, .answer-box {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      min-height: 45px;
-      padding: 10px;
-      border: 2px dashed #ccc;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      background: #fafafa;
+      min-height: 52px;
+      padding: 12px;
+      border: 2px dashed #cbd5e1;
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      background: #f8fafc;
+      align-items: center;
     }
+
+    .answer-box {
+      background: #ffffff;
+      border-style: solid;
+      border-color: #a5b4fc;
+    }
+
     .word-btn {
-      background: #e0e7ff;
-      color: #3730a3;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 4px;
+      background: #ffffff;
+      color: #1e293b;
+      border: 1px solid #cbd5e1;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.15s ease;
     }
-    .result-msg { font-weight: bold; margin-top: 10px; white-space: pre-wrap; }
-    .correct { color: #16a34a; }
-    .incorrect { color: #dc2626; }
+
+    .word-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .answer-box .word-btn {
+      background: #e0e7ff;
+      border-color: #c7d2fe;
+      color: #3730a3;
+    }
+
+    /* 判定メッセージ */
+    .result-msg {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: var(--radius-sm);
+      white-space: pre-wrap;
+    }
+
+    .result-msg.correct {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+
+    .result-msg.incorrect {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
   </style>
 </head>
 <body>
 
 <div class="container">
-  <h1>English Learning Hub</h1>
+  <header>
+    <h1>English <span>Mastery</span></h1>
+  </header>
 
-  <!-- ① 一番最初のドラッグ＆ドロップ領域 -->
+  <!-- ① ドラッグ＆ドロップ画面 -->
   <div id="uploadScreen">
     <div class="drop-zone" id="dropZone">
-      <div class="drop-icon">📁</div>
-      <div class="drop-title">ここにJSONファイルをドラッグ＆ドロップ</div>
+      <div class="drop-icon">
+        <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+      </div>
+      <div class="drop-title">JSONファイルをドラッグ＆ドロップ</div>
       <div class="drop-sub">またはクリックしてファイルを選択</div>
       <input type="file" id="jsonFile" accept=".json" style="display: none;">
     </div>
@@ -176,13 +363,13 @@
   <!-- ② ファイル読み込み後の学習画面 -->
   <div id="mainApp" style="display: none;">
     <div class="app-header">
-      <span class="data-info" id="dataInfo">全 0 問</span>
-      <button class="btn btn-secondary" onclick="resetApp()">← 別のファイルを読み込む</button>
+      <span class="data-badge" id="dataInfo">0 件の例文</span>
+      <button class="btn btn-secondary" onclick="resetApp()">← ファイルを変更</button>
     </div>
 
     <!-- タブナビゲーション -->
     <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('memorize', event)">① 暗記＆音声</button>
+      <button class="tab-btn active" onclick="switchTab('memorize', event)">① 暗記 & 音声</button>
       <button class="tab-btn" onclick="switchTab('reorder', event)">② 並び替え</button>
       <button class="tab-btn" onclick="switchTab('composition', event)">③ 英作文</button>
     </div>
@@ -195,24 +382,30 @@
     <!-- ② 並び替え問題モード -->
     <div id="reorderTab" class="tab-content" style="display:none;">
       <div class="card">
+        <span class="q-number" id="reorderNum">QUESTION</span>
         <div id="reorderJa" class="ja-text"></div>
         <div id="answerBox" class="answer-box"></div>
         <div id="wordPool" class="word-pool"></div>
-        <button class="btn" onclick="checkReorder()">判定する</button>
-        <button class="btn btn-secondary" onclick="nextReorderQuestion()">次の問題</button>
-        <div id="reorderResult" class="result-msg"></div>
+        <div class="btn-group">
+          <button class="btn" onclick="checkReorder()">判定する</button>
+          <button class="btn btn-secondary" onclick="nextReorderQuestion()">次の問題 →</button>
+        </div>
+        <div id="reorderResult" class="result-msg" style="display: none;"></div>
       </div>
     </div>
 
     <!-- ③ 英作文モード -->
     <div id="compositionTab" class="tab-content" style="display:none;">
       <div class="card">
+        <span class="q-number" id="compNum">QUESTION</span>
         <div id="compJa" class="ja-text"></div>
-        <textarea id="compInput" rows="3" placeholder="ここに英文を入力してください..."></textarea>
-        <button class="btn" onclick="checkComposition()">答え合わせ</button>
-        <button class="btn" onclick="playAudio(currentData[currentCompIndex].en)">音声を聞く</button>
-        <button class="btn btn-secondary" onclick="nextCompQuestion()">次の問題</button>
-        <div id="compResult" class="result-msg"></div>
+        <textarea id="compInput" rows="3" placeholder="英語で文を入力してください..."></textarea>
+        <div class="btn-group">
+          <button class="btn" onclick="checkComposition()">答え合わせ</button>
+          <button class="btn btn-audio" onclick="playAudio(currentData[currentCompIndex].en)">🔊 音声を聞く</button>
+          <button class="btn btn-secondary" onclick="nextCompQuestion()">次の問題 →</button>
+        </div>
+        <div id="compResult" class="result-msg" style="display: none;"></div>
       </div>
     </div>
   </div>
@@ -282,7 +475,7 @@
   function startApp() {
     document.getElementById('uploadScreen').style.display = 'none';
     document.getElementById('mainApp').style.display = 'block';
-    document.getElementById('dataInfo').innerText = `読み込み中: 全 ${currentData.length} 問`;
+    document.getElementById('dataInfo').innerText = `${currentData.length} 件の例文`;
 
     currentReorderIndex = 0;
     currentCompIndex = 0;
@@ -292,7 +485,7 @@
     loadCompQuestion(0);
   }
 
-  // リセット（ドラッグ＆ドロップ画面に戻る）
+  // リセット
   function resetApp() {
     document.getElementById('mainApp').style.display = 'none';
     document.getElementById('uploadScreen').style.display = 'block';
@@ -338,9 +531,10 @@
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
-        <div class="ja-text">No.${item.id} ${item.ja}</div>
+        <span class="q-number">No.${item.id}</span>
+        <div class="ja-text">${item.ja}</div>
         <div class="en-text">${item.en}</div>
-        <button class="btn" onclick="playAudio('${item.en.replace(/'/g, "\\'")}')">🔊 音声を再生</button>
+        <button class="btn btn-audio" onclick="playAudio('${item.en.replace(/'/g, "\\'")}')">🔊 音声を再生</button>
       `;
       container.appendChild(card);
     });
@@ -351,11 +545,15 @@
     if (!currentData.length) return;
     currentReorderIndex = index % currentData.length;
     const q = currentData[currentReorderIndex];
-    document.getElementById('reorderJa').innerText = `No.${q.id} ${q.ja}`;
-    document.getElementById('reorderResult').innerText = '';
+    document.getElementById('reorderNum').innerText = `QUESTION ${currentReorderIndex + 1} / ${currentData.length}`;
+    document.getElementById('reorderJa').innerText = q.ja;
+    
+    const resDiv = document.getElementById('reorderResult');
+    resDiv.style.display = 'none';
+    resDiv.innerText = '';
+    
     selectedWords = [];
 
-    // 単語を分解してシャッフル
     const words = q.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(" ");
     const shuffled = [...words].sort(() => Math.random() - 0.5);
 
@@ -386,7 +584,6 @@
     selectedWords.forEach((word, idx) => {
       const btn = document.createElement('button');
       btn.className = 'word-btn';
-      btn.style.background = '#c7d2fe';
       btn.innerText = word;
       btn.onclick = () => {
         selectedWords.splice(idx, 1);
@@ -400,6 +597,7 @@
     const target = currentData[currentReorderIndex].en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").toLowerCase();
     const userAns = selectedWords.join(" ").toLowerCase();
     const resDiv = document.getElementById('reorderResult');
+    resDiv.style.display = 'block';
 
     if (target === userAns) {
       resDiv.className = 'result-msg correct';
@@ -420,19 +618,24 @@
     if (!currentData.length) return;
     currentCompIndex = index % currentData.length;
     const q = currentData[currentCompIndex];
-    document.getElementById('compJa').innerText = `No.${q.id} ${q.ja}`;
+    document.getElementById('compNum').innerText = `QUESTION ${currentCompIndex + 1} / ${currentData.length}`;
+    document.getElementById('compJa').innerText = q.ja;
     document.getElementById('compInput').value = '';
-    document.getElementById('compResult').innerText = '';
+    
+    const resDiv = document.getElementById('compResult');
+    resDiv.style.display = 'none';
+    resDiv.innerText = '';
   }
 
   function checkComposition() {
     const userVal = document.getElementById('compInput').value.trim().toLowerCase();
     const targetVal = currentData[currentCompIndex].en.trim().toLowerCase();
     const resDiv = document.getElementById('compResult');
+    resDiv.style.display = 'block';
 
     if (userVal === targetVal) {
       resDiv.className = 'result-msg correct';
-      resDiv.innerText = '⭕️ 正解！よくできました。';
+      resDiv.innerText = '⭕️ 正解！素晴らしいです。';
       playAudio(currentData[currentCompIndex].en);
     } else {
       resDiv.className = 'result-msg incorrect';
