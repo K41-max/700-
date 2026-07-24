@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>English Learning Hub Pro</title>
   <!-- Google Fonts: Inter & Noto Sans JP -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -38,6 +38,7 @@
       min-height: 100vh;
       display: flex;
       overflow-x: hidden;
+      touch-action: manipulation;
     }
 
     /* GitHub風 スライドアウト・サイドバー */
@@ -53,9 +54,7 @@
       flex-shrink: 0;
     }
 
-    .sidebar.collapsed {
-      margin-left: -280px;
-    }
+    .sidebar.collapsed { margin-left: -280px; }
 
     .sidebar-header {
       padding: 16px 20px;
@@ -68,11 +67,7 @@
       color: #e2e8f0;
     }
 
-    .sidebar-content {
-      padding: 16px;
-      flex: 1;
-      overflow-y: auto;
-    }
+    .sidebar-content { padding: 16px; flex: 1; overflow-y: auto; }
 
     .sidebar-title {
       font-size: 0.75rem;
@@ -83,11 +78,7 @@
       margin-bottom: 12px;
     }
 
-    /* ファイル一覧リスト */
-    .file-list {
-      list-style: none;
-      margin-bottom: 20px;
-    }
+    .file-list { list-style: none; margin-bottom: 20px; }
 
     .file-item {
       display: flex;
@@ -102,23 +93,9 @@
       transition: all 0.2s;
     }
 
-    .file-item:hover {
-      background: #1e293b;
-      color: #fff;
-    }
-
-    .file-item.active {
-      background: #1e293b;
-      color: var(--sidebar-active);
-      font-weight: 600;
-    }
-
-    .file-item-name {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 170px;
-    }
+    .file-item:hover { background: #1e293b; color: #fff; }
+    .file-item.active { background: #1e293b; color: var(--sidebar-active); font-weight: 600; }
+    .file-item-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 170px; }
 
     .btn-delete-file {
       background: transparent;
@@ -129,13 +106,8 @@
       padding: 2px 6px;
       border-radius: 4px;
     }
+    .btn-delete-file:hover { color: #ef4444; background: #334155; }
 
-    .btn-delete-file:hover {
-      color: #ef4444;
-      background: #334155;
-    }
-
-    /* ドラッグ＆ドロップ（サイドバー内） */
     .sidebar-dropzone {
       border: 2px dashed #334155;
       border-radius: var(--radius-md);
@@ -145,25 +117,11 @@
       transition: all 0.2s;
       background: #0f172a;
     }
+    .sidebar-dropzone:hover, .sidebar-dropzone.dragover { border-color: var(--primary); background: #1e293b; }
+    .sidebar-dropzone p { font-size: 0.8rem; color: var(--sidebar-text); }
 
-    .sidebar-dropzone:hover, .sidebar-dropzone.dragover {
-      border-color: var(--primary);
-      background: #1e293b;
-    }
-
-    .sidebar-dropzone p {
-      font-size: 0.8rem;
-      color: var(--sidebar-text);
-    }
-
-    /* メインコンテンツエリア */
-    .main-wrapper {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      overflow-y: auto;
-    }
+    /* メインエリア */
+    .main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; }
 
     .top-bar {
       display: flex;
@@ -186,26 +144,12 @@
       align-items: center;
       gap: 6px;
     }
-
     .toggle-sidebar-btn:hover { background: #f1f5f9; }
 
-    .container {
-      max-width: 800px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 30px 20px;
-    }
+    .container { max-width: 800px; width: 100%; margin: 0 auto; padding: 30px 20px; }
 
-    /* タブバー */
-    .tabs {
-      display: flex;
-      background: #e2e8f0;
-      padding: 4px;
-      border-radius: var(--radius-md);
-      margin-bottom: 24px;
-      gap: 4px;
-    }
-
+    /* タブ */
+    .tabs { display: flex; background: #e2e8f0; padding: 4px; border-radius: var(--radius-md); margin-bottom: 24px; gap: 4px; }
     .tab-btn {
       flex: 1;
       padding: 10px 16px;
@@ -218,14 +162,9 @@
       font-size: 0.9rem;
       transition: all 0.2s;
     }
+    .tab-btn.active { background: var(--card-bg); color: var(--primary); box-shadow: var(--shadow-sm); }
 
-    .tab-btn.active {
-      background: var(--card-bg);
-      color: var(--primary);
-      box-shadow: var(--shadow-sm);
-    }
-
-    /* コントロールパネル・設定カード */
+    /* 設定カード */
     .control-panel {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -234,30 +173,9 @@
       margin-bottom: 24px;
       box-shadow: var(--shadow-sm);
     }
-
-    .panel-title {
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .setting-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      align-items: center;
-    }
-
-    .setting-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.875rem;
-    }
+    .panel-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; color: var(--text-main); }
+    .setting-group { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    .setting-item { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; }
 
     select, input[type="number"] {
       padding: 6px 12px;
@@ -268,11 +186,7 @@
       background: #fff;
     }
 
-    select:focus, input[type="number"]:focus {
-      border-color: var(--primary);
-    }
-
-    /* カード＆問題表示 */
+    /* 問題カード */
     .card {
       background: var(--card-bg);
       padding: 24px;
@@ -283,36 +197,15 @@
       position: relative;
     }
 
-    .q-badge-group {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .q-number {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: var(--primary);
-      background: #eeef2;
-      padding: 2px 8px;
-      border-radius: 4px;
-    }
-
-    .wrong-badge {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #dc2626;
-      background: #fef2f2;
-      padding: 2px 8px;
-      border-radius: 4px;
-    }
+    .q-badge-group { display: flex; gap: 8px; margin-bottom: 12px; }
+    .q-number { font-size: 0.75rem; font-weight: 700; color: var(--primary); background: #e0e7ff; padding: 2px 8px; border-radius: 4px; }
+    .wrong-badge { font-size: 0.75rem; font-weight: 700; color: #dc2626; background: #fef2f2; padding: 2px 8px; border-radius: 4px; }
 
     .ja-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; }
     .en-text { font-size: 1.2rem; color: #334155; margin-bottom: 16px; font-weight: 500; }
 
-    /* ボタン群 */
+    /* ボタン */
     .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
-
     button.btn {
       background: var(--primary);
       color: white;
@@ -324,50 +217,74 @@
       font-size: 0.875rem;
       transition: all 0.2s;
     }
-
     button.btn:hover { background: var(--primary-hover); }
-
-    button.btn-secondary {
-      background: #f1f5f9;
-      color: var(--text-main);
-      border: 1px solid var(--border-color);
-    }
-
+    button.btn-secondary { background: #f1f5f9; color: var(--text-main); border: 1px solid var(--border-color); }
     button.btn-secondary:hover { background: #e2e8f0; }
+    button.btn-danger { background: #ef4444; color: white; }
 
-    button.btn-danger {
-      background: #ef4444;
-      color: white;
-    }
-
-    /* 並び替えエリア */
+    /* 並び替えエリア (ドラッグ＆ドロップ対応スタイル) */
     .word-pool, .answer-box {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      min-height: 50px;
-      padding: 10px;
+      min-height: 60px;
+      padding: 12px;
       border: 2px dashed #cbd5e1;
       border-radius: var(--radius-md);
       margin-bottom: 16px;
       background: #f8fafc;
       align-items: center;
+      transition: all 0.2s ease;
     }
 
     .answer-box { background: #fff; border-style: solid; border-color: #a5b4fc; }
 
+    /* ドラッグホバー時の強調 */
+    .word-pool.drag-over, .answer-box.drag-over {
+      background: #eef2ff;
+      border-color: var(--primary);
+      transform: scale(1.01);
+    }
+
     .word-btn {
       background: #fff;
       border: 1px solid #cbd5e1;
-      padding: 6px 12px;
+      padding: 8px 14px;
       border-radius: var(--radius-sm);
-      cursor: pointer;
-      font-size: 0.9rem;
+      cursor: grab;
+      font-size: 0.95rem;
       font-weight: 500;
+      user-select: none;
+      touch-action: none; /* スマホスクロールと干渉させない */
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s, opacity 0.15s, background-color 0.15s;
     }
 
-    .word-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .word-btn:active { cursor: grabbing; }
+
+    .word-btn.dragging {
+      opacity: 0.3;
+      transform: scale(0.95);
+    }
+
+    .word-btn.target-hover {
+      border-left: 4px solid var(--primary);
+    }
+
     .answer-box .word-btn { background: #e0e7ff; border-color: #c7d2fe; color: #3730a3; }
+
+    /* スマホで指ドラッグ中の追従用ゴースト要素 */
+    .touch-ghost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.9;
+      transform: scale(1.08) rotate(2deg);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+      background: #4f46e5 !important;
+      color: #fff !important;
+      border-color: #4338ca !important;
+    }
 
     textarea {
       width: 100%;
@@ -379,7 +296,6 @@
       margin-bottom: 12px;
       outline: none;
     }
-
     textarea:focus { border-color: var(--primary); }
 
     .result-msg {
@@ -392,28 +308,19 @@
     .result-msg.correct { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
     .result-msg.incorrect { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
 
-    /* 初期案内画面 */
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      background: var(--card-bg);
-      border-radius: var(--radius-lg);
-      border: 1px dashed var(--border-color);
-    }
+    .empty-state { text-align: center; padding: 60px 20px; background: var(--card-bg); border-radius: var(--radius-lg); border: 1px dashed var(--border-color); }
   </style>
 </head>
 <body>
 
-<!-- GitHub風 サイドバー (ファイルナビゲーター) -->
+<!-- GitHub風 サイドバー -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <span>📂 Files Navigator</span>
   </div>
   <div class="sidebar-content">
     <div class="sidebar-title">読み込み済みファイル</div>
-    <ul class="file-list" id="fileList">
-      <!-- JavaScriptで動的生成 -->
-    </ul>
+    <ul class="file-list" id="fileList"></ul>
 
     <div class="sidebar-title">ファイルを追加</div>
     <div class="sidebar-dropzone" id="sidebarDropzone">
@@ -424,7 +331,7 @@
   </div>
 </aside>
 
-<!-- メイン表示領域 -->
+<!-- メインエリア -->
 <div class="main-wrapper">
   <div class="top-bar">
     <button class="toggle-sidebar-btn" onclick="toggleSidebar()">
@@ -434,7 +341,6 @@
   </div>
 
   <div class="container">
-    <!-- データが存在しない時の案内 -->
     <div id="noDataState" class="empty-state">
       <h2>データファイルがありません</h2>
       <p style="color: var(--text-muted); margin: 12px 0 20px;">
@@ -442,51 +348,43 @@
       </p>
     </div>
 
-    <!-- アプリメイン領域 -->
     <div id="appContainer" style="display: none;">
-      <!-- タブ切り替え -->
+      <!-- タブバー -->
       <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('memorize', event)">① 暗記 & 連続音声</button>
         <button class="tab-btn" onclick="switchTab('reorder', event)">② 並び替えテスト</button>
         <button class="tab-btn" onclick="switchTab('composition', event)">③ 英作文テスト</button>
       </div>
 
-      <!-- ① 暗記・連続音声再生タブ -->
+      <!-- ① 暗記タブ -->
       <div id="memorizeTab" class="tab-content">
-        <!-- 連続再生コントロールパネル -->
         <div class="control-panel">
           <div class="panel-title">🎧 連続音声再生設定</div>
           <div class="setting-group">
             <div class="setting-item">
               <label>モード:</label>
               <select id="audioMode" onchange="toggleAudioModeInput()">
-                <select-option value="loops">周数指定 (n周)</select-option>
                 <option value="loops">周数指定 (n周)</option>
                 <option value="timer">時間指定 (○分間)</option>
               </select>
             </div>
-
             <div class="setting-item" id="loopInputGroup">
               <label>再生周数:</label>
               <input type="number" id="audioLoops" value="1" min="1" max="50" style="width: 70px;"> 周
             </div>
-
             <div class="setting-item" id="timerInputGroup" style="display: none;">
               <label>タイマー:</label>
               <input type="number" id="audioMinutes" value="5" min="1" max="180" style="width: 70px;"> 分
             </div>
-
             <button class="btn" id="playAudioBtn" onclick="toggleContinuousPlay()">▶ 連続再生を開始</button>
           </div>
           <div id="audioStatusMsg" style="font-size: 0.85rem; color: var(--primary); margin-top: 10px; font-weight: 600;"></div>
         </div>
-
         <div id="listContainer"></div>
       </div>
 
       <!-- ② 並び替えテストタブ -->
       <div id="reorderTab" class="tab-content" style="display: none;">
-        <!-- 出題設定パネル -->
         <div class="control-panel">
           <div class="panel-title">⚙️ 出題設定</div>
           <div class="setting-group">
@@ -499,7 +397,6 @@
                 <option value="all">フル (全問)</option>
               </select>
             </div>
-
             <div class="setting-item">
               <label>出題順:</label>
               <select id="reorderOrderSelect">
@@ -508,7 +405,6 @@
                 <option value="review">復習優先 (苦手重視)</option>
               </select>
             </div>
-
             <button class="btn" onclick="startReorderSession()">テストを開始/リセット</button>
           </div>
         </div>
@@ -519,8 +415,14 @@
             <span class="wrong-badge" id="reorderWrongBadge" style="display:none;"></span>
           </div>
           <div id="reorderJa" class="ja-text"></div>
+          
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;">💡 指やマウスでドラッグ＆ドロップして並び替えられます（タップ移動も可）</div>
+          
+          <!-- 解答エリア -->
           <div id="answerBox" class="answer-box"></div>
+          <!-- 単語プール -->
           <div id="wordPool" class="word-pool"></div>
+
           <div class="btn-group">
             <button class="btn" onclick="checkReorder()">判定する</button>
             <button class="btn btn-secondary" onclick="nextReorderQuestion()">次の問題 →</button>
@@ -531,7 +433,6 @@
 
       <!-- ③ 英作文テストタブ -->
       <div id="compositionTab" class="tab-content" style="display: none;">
-        <!-- 出題設定パネル -->
         <div class="control-panel">
           <div class="panel-title">⚙️ 出題設定</div>
           <div class="setting-group">
@@ -544,7 +445,6 @@
                 <option value="all">フル (全問)</option>
               </select>
             </div>
-
             <div class="setting-item">
               <label>出題順:</label>
               <select id="compOrderSelect">
@@ -553,7 +453,6 @@
                 <option value="review">復習優先 (苦手重視)</option>
               </select>
             </div>
-
             <button class="btn" onclick="startCompSession()">テストを開始/リセット</button>
           </div>
         </div>
@@ -579,16 +478,13 @@
 </div>
 
 <script>
-  // --- グローバル状態管理 ---
-  let fileList = []; // { id, name, data }
+  // --- グローバル状態 ---
+  let fileList = [];
   let activeFileId = null;
-  let activeData = []; // 現在選択中の問題データ
-
-  // 各問題のミス記録 (LocalStorageで保持)
-  // 形式: { [fileId_sentenceId]: { wrongCount: 3, lastWrong: timestamp } }
+  let activeData = [];
   let statsData = JSON.parse(localStorage.getItem('english_app_stats') || '{}');
 
-  // 音声連続再生状態
+  // 音声状態
   let isPlayingContinuous = false;
   let speechUtterance = null;
   let continuousIndex = 0;
@@ -596,13 +492,16 @@
   let totalLoopsTarget = 1;
   let timerEndTime = null;
 
-  // テストセッション状態
+  // テスト状態
   let activeSessionQuestions = [];
   let reorderIndex = 0;
   let compIndex = 0;
-  let selectedWords = [];
 
-  // --- 初期化 & DOM準備 ---
+  // 並び替え用配列データ
+  let poolWords = [];     // まだ選択していない単語
+  let selectedWords = []; // 解答枠に入っている単語
+
+  // --- 初期化 ---
   const sidebarDropzone = document.getElementById('sidebarDropzone');
   const sidebarFileInput = document.getElementById('sidebarFileInput');
 
@@ -624,32 +523,27 @@
     document.getElementById('toggleIcon').innerText = sidebar.classList.contains('collapsed') ? '▶' : '◀';
   }
 
-  // --- ファイル読み込み & 管理機能 ---
+  // --- ファイル管理 ---
   function handleFileSelect(file) {
     if (!file.name.endsWith('.json') && !file.name.endsWith('.txt')) {
       alert('JSON形式のファイル (.json / .txt) を指定してください。');
       return;
     }
-
     const reader = new FileReader();
     reader.onload = function(evt) {
       try {
         const parsed = JSON.parse(evt.target.result);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          const newFile = {
-            id: 'file_' + Date.now(),
-            name: file.name,
-            data: parsed
-          };
+          const newFile = { id: 'file_' + Date.now(), name: file.name, data: parsed };
           fileList.push(newFile);
           activeFileId = newFile.id;
           renderFileList();
           loadActiveFileData();
         } else {
-          alert('有効な問題データ（JSON配列）が見つかりませんでした。');
+          alert('有効な問題データが見つかりませんでした。');
         }
       } catch (err) {
-        alert('JSONファイルの解釈に失敗しました。書式を確認してください。');
+        alert('JSONファイルの読み込みに失敗しました。');
       }
     };
     reader.readAsText(file);
@@ -658,16 +552,10 @@
   function renderFileList() {
     const container = document.getElementById('fileList');
     container.innerHTML = '';
-
     fileList.forEach(f => {
       const li = document.createElement('li');
       li.className = `file-item ${f.id === activeFileId ? 'active' : ''}`;
-      li.onclick = () => {
-        activeFileId = f.id;
-        renderFileList();
-        loadActiveFileData();
-      };
-
+      li.onclick = () => { activeFileId = f.id; renderFileList(); loadActiveFileData(); };
       li.innerHTML = `
         <span class="file-item-name">📄 ${f.name}</span>
         <button class="btn-delete-file" title="削除" onclick="deleteFile('${f.id}', event)">✕</button>
@@ -679,9 +567,7 @@
   function deleteFile(id, evt) {
     evt.stopPropagation();
     fileList = fileList.filter(f => f.id !== id);
-    if (activeFileId === id) {
-      activeFileId = fileList.length ? fileList[0].id : null;
-    }
+    if (activeFileId === id) activeFileId = fileList.length ? fileList[0].id : null;
     renderFileList();
     loadActiveFileData();
   }
@@ -689,7 +575,6 @@
   function loadActiveFileData() {
     stopContinuousPlay();
     const currentFile = fileList.find(f => f.id === activeFileId);
-
     if (!currentFile) {
       document.getElementById('noDataState').style.display = 'block';
       document.getElementById('appContainer').style.display = 'none';
@@ -697,84 +582,59 @@
       activeData = [];
       return;
     }
-
     document.getElementById('noDataState').style.display = 'none';
     document.getElementById('appContainer').style.display = 'block';
     document.getElementById('currentFileNameDisplay').innerText = `選択中: ${currentFile.name} (${currentFile.data.length}問)`;
-
     activeData = currentFile.data;
     renderMemorizeList();
     startReorderSession();
     startCompSession();
   }
 
-  // --- スコア・誤答記録管理 (アルゴリズム用) ---
-  function getStatKey(item) {
-    return `${activeFileId}_${item.id}`;
-  }
-
+  // --- スコア・誤答計算 ---
+  function getStatKey(item) { return `${activeFileId}_${item.id}`; }
   function recordWrongAnswer(item) {
     const key = getStatKey(item);
-    if (!statsData[key]) {
-      statsData[key] = { wrongCount: 0, lastWrong: 0 };
-    }
+    if (!statsData[key]) statsData[key] = { wrongCount: 0, lastWrong: 0 };
     statsData[key].wrongCount += 1;
     statsData[key].lastWrong = Date.now();
     localStorage.setItem('english_app_stats', JSON.stringify(statsData));
   }
-
   function getItemWrongCount(item) {
     const key = getStatKey(item);
     return statsData[key] ? statsData[key].wrongCount : 0;
   }
 
-  // 出題アルゴリズム（問題のフィルタ＆ソート）
   function buildQuestionSet(countType, orderType) {
     let list = [...activeData];
-
     if (orderType === 'random') {
       list.sort(() => Math.random() - 0.5);
     } else if (orderType === 'review') {
-      // 復習優先アルゴリズム: 間違い回数が多く、最近間違えたものを優先
       list.sort((a, b) => {
         const statA = statsData[getStatKey(a)] || { wrongCount: 0, lastWrong: 0 };
         const statB = statsData[getStatKey(b)] || { wrongCount: 0, lastWrong: 0 };
-        
-        // スコア計算 = ミス回数*10 + 経過時間補正
-        if (statB.wrongCount !== statA.wrongCount) {
-          return statB.wrongCount - statA.wrongCount;
-        }
+        if (statB.wrongCount !== statA.wrongCount) return statB.wrongCount - statA.wrongCount;
         return statB.lastWrong - statA.lastWrong;
       });
     }
-
     if (countType !== 'all') {
-      const num = parseInt(countType, 10);
-      list = list.slice(0, num);
+      list = list.slice(0, parseInt(countType, 10));
     }
-
     return list;
   }
 
-  // --- タブ制御 ---
+  // --- タブ管理 ---
   function switchTab(tabName, evt) {
     document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
-
     if (evt && evt.target) evt.target.classList.add('active');
-
     stopContinuousPlay();
-
-    if (tabName === 'memorize') {
-      document.getElementById('memorizeTab').style.display = 'block';
-    } else if (tabName === 'reorder') {
-      document.getElementById('reorderTab').style.display = 'block';
-    } else if (tabName === 'composition') {
-      document.getElementById('compositionTab').style.display = 'block';
-    }
+    if (tabName === 'memorize') document.getElementById('memorizeTab').style.display = 'block';
+    else if (tabName === 'reorder') document.getElementById('reorderTab').style.display = 'block';
+    else if (tabName === 'composition') document.getElementById('compositionTab').style.display = 'block';
   }
 
-  // --- ① 暗記 & 連続音声処理 ---
+  // --- ① 暗記 & 音声 ---
   function renderMemorizeList() {
     const container = document.getElementById('listContainer');
     container.innerHTML = '';
@@ -802,16 +662,12 @@
   }
 
   function toggleContinuousPlay() {
-    if (isPlayingContinuous) {
-      stopContinuousPlay();
-    } else {
-      startContinuousPlay();
-    }
+    if (isPlayingContinuous) stopContinuousPlay();
+    else startContinuousPlay();
   }
 
   function startContinuousPlay() {
     if (!activeData.length) return;
-
     isPlayingContinuous = true;
     continuousIndex = 0;
     currentLoop = 1;
@@ -833,9 +689,7 @@
 
   function stopContinuousPlay() {
     isPlayingContinuous = false;
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
+    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     document.getElementById('playAudioBtn').innerText = '▶ 連続再生を開始';
     document.getElementById('playAudioBtn').classList.remove('btn-danger');
     document.getElementById('audioStatusMsg').innerText = '';
@@ -843,15 +697,11 @@
 
   function playNextContinuousSentence() {
     if (!isPlayingContinuous) return;
-
-    // タイマーチェック（きりがいいところで終了）
     if (timerEndTime && Date.now() >= timerEndTime) {
       document.getElementById('audioStatusMsg').innerText = '⏱ 設定時間が経過したためきりの良いところで終了しました。';
       stopContinuousPlay();
       return;
     }
-
-    // 周数チェック
     if (continuousIndex >= activeData.length) {
       if (totalLoopsTarget && currentLoop >= totalLoopsTarget) {
         document.getElementById('audioStatusMsg').innerText = `✅ 指定の ${totalLoopsTarget} 周の再生が完了しました。`;
@@ -863,24 +713,15 @@
     }
 
     const item = activeData[continuousIndex];
-    const statusText = timerEndTime 
+    document.getElementById('audioStatusMsg').innerText = timerEndTime 
       ? `再生中... (${continuousIndex + 1}/${activeData.length}問目)`
       : `再生中... ${currentLoop}周目 (${continuousIndex + 1}/${activeData.length}問目)`;
-    document.getElementById('audioStatusMsg').innerText = statusText;
 
     speechUtterance = new SpeechSynthesisUtterance(item.en);
     speechUtterance.lang = 'en-US';
     speechUtterance.rate = 0.9;
-
-    speechUtterance.onend = () => {
-      continuousIndex++;
-      playNextContinuousSentence();
-    };
-
-    speechUtterance.onerror = () => {
-      stopContinuousPlay();
-    };
-
+    speechUtterance.onend = () => { continuousIndex++; playNextContinuousSentence(); };
+    speechUtterance.onerror = () => stopContinuousPlay();
     window.speechSynthesis.speak(speechUtterance);
   }
 
@@ -894,7 +735,10 @@
     }
   }
 
-  // --- ② 並び替えテスト処理 ---
+  // --- ② 並び替えテスト（タッチ＆マウスマウスドラッグ対応） ---
+  let activeDragInfo = null; // { source: 'pool'|'answer', index: number }
+  let touchGhost = null;
+
   function startReorderSession() {
     const countType = document.getElementById('reorderCountSelect').value;
     const orderType = document.getElementById('reorderOrderSelect').value;
@@ -909,39 +753,31 @@
     const wrongCount = getItemWrongCount(q);
 
     document.getElementById('reorderNum').innerText = `QUESTION ${reorderIndex + 1} / ${activeSessionQuestions.length}`;
-    
     const badge = document.getElementById('reorderWrongBadge');
-    if (wrongCount > 0) {
-      badge.style.display = 'inline';
-      badge.innerText = `ミス: ${wrongCount}回`;
-    } else {
-      badge.style.display = 'none';
-    }
+    if (wrongCount > 0) { badge.style.display = 'inline'; badge.innerText = `ミス: ${wrongCount}回`; }
+    else { badge.style.display = 'none'; }
 
     document.getElementById('reorderJa').innerText = q.ja;
     document.getElementById('reorderResult').style.display = 'none';
+
+    // 単語をシャッフル
+    const words = q.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(" ");
+    poolWords = [...words].sort(() => Math.random() - 0.5);
     selectedWords = [];
 
-    const words = q.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(" ");
-    const shuffled = [...words].sort(() => Math.random() - 0.5);
+    renderReorderUI();
+  }
 
-    renderReorderPool(shuffled);
+  function renderReorderUI() {
+    renderWordPool();
     renderAnswerBox();
   }
 
-  function renderReorderPool(words) {
+  function renderWordPool() {
     const pool = document.getElementById('wordPool');
     pool.innerHTML = '';
-    words.forEach((word, idx) => {
-      const btn = document.createElement('button');
-      btn.className = 'word-btn';
-      btn.innerText = word;
-      btn.onclick = () => {
-        selectedWords.push(word);
-        words.splice(idx, 1);
-        renderReorderPool(words);
-        renderAnswerBox();
-      };
+    poolWords.forEach((word, idx) => {
+      const btn = createWordButton(word, 'pool', idx);
       pool.appendChild(btn);
     });
   }
@@ -950,15 +786,167 @@
     const box = document.getElementById('answerBox');
     box.innerHTML = '';
     selectedWords.forEach((word, idx) => {
-      const btn = document.createElement('button');
-      btn.className = 'word-btn';
-      btn.innerText = word;
-      btn.onclick = () => {
-        selectedWords.splice(idx, 1);
-        renderAnswerBox();
-      };
+      const btn = createWordButton(word, 'answer', idx);
       box.appendChild(btn);
     });
+  }
+
+  // ドラッグ＆ドロップ ＋ タップ対応のボタン生成
+  function createWordButton(word, source, index) {
+    const btn = document.createElement('button');
+    btn.className = 'word-btn';
+    btn.innerText = word;
+    btn.dataset.source = source;
+    btn.dataset.index = index;
+    btn.draggable = true;
+
+    // --- 1. タップ(クリック)移動 ---
+    btn.onclick = () => {
+      if (source === 'pool') {
+        const moved = poolWords.splice(index, 1)[0];
+        selectedWords.push(moved);
+      } else {
+        const moved = selectedWords.splice(index, 1)[0];
+        poolWords.push(moved);
+      }
+      renderReorderUI();
+    };
+
+    // --- 2. PC マウスドラッグイベント ---
+    btn.addEventListener('dragstart', (e) => {
+      activeDragInfo = { source, index };
+      btn.classList.add('dragging');
+      e.dataTransfer.setData('text/plain', JSON.stringify(activeDragInfo));
+    });
+
+    btn.addEventListener('dragend', () => {
+      btn.classList.remove('dragging');
+      activeDragInfo = null;
+    });
+
+    // --- 3. スマホ タッチ（指ドラッグ）イベント ---
+    btn.addEventListener('touchstart', (e) => {
+      const touch = e.touches[0];
+      activeDragInfo = { source, index };
+
+      // ゴースト生成
+      touchGhost = btn.cloneNode(true);
+      touchGhost.classList.add('touch-ghost');
+      document.body.appendChild(touchGhost);
+      updateGhostPos(touch);
+
+      btn.classList.add('dragging');
+    }, { passive: true });
+
+    btn.addEventListener('touchmove', (e) => {
+      if (!touchGhost) return;
+      const touch = e.touches[0];
+      e.preventDefault(); // 画面スクロール防止
+      updateGhostPos(touch);
+
+      // 指下の要素をチェック
+      const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+      highlightDropZone(targetEl);
+    }, { passive: false });
+
+    btn.addEventListener('touchend', (e) => {
+      if (!touchGhost) return;
+      const touch = e.changedTouches[0];
+      const targetEl = document.elementFromPoint(touch.clientX, touch.clientY);
+
+      removeGhost();
+      btn.classList.remove('dragging');
+      clearDropHighlights();
+
+      if (targetEl && activeDragInfo) {
+        executeDrop(targetEl, activeDragInfo);
+      }
+      activeDragInfo = null;
+    });
+
+    return btn;
+  }
+
+  function updateGhostPos(touch) {
+    if (!touchGhost) return;
+    touchGhost.style.left = (touch.clientX - 35) + 'px';
+    touchGhost.style.top = (touch.clientY - 20) + 'px';
+  }
+
+  function removeGhost() {
+    if (touchGhost && touchGhost.parentNode) {
+      touchGhost.parentNode.removeChild(touchGhost);
+    }
+    touchGhost = null;
+  }
+
+  // コンテナへのHTML5ドラッグオーバー設定
+  function setupContainerEvents(containerId) {
+    const container = document.getElementById(containerId);
+    container.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      container.classList.add('drag-over');
+    });
+    container.addEventListener('dragleave', () => {
+      container.classList.remove('drag-over');
+    });
+    container.addEventListener('drop', (e) => {
+      e.preventDefault();
+      container.classList.remove('drag-over');
+      if (activeDragInfo) {
+        executeDrop(e.target, activeDragInfo);
+      }
+    });
+  }
+
+  setupContainerEvents('answerBox');
+  setupContainerEvents('wordPool');
+
+  function highlightDropZone(targetEl) {
+    clearDropHighlights();
+    if (!targetEl) return;
+    const box = targetEl.closest('#answerBox, #wordPool');
+    if (box) box.classList.add('drag-over');
+  }
+
+  function clearDropHighlights() {
+    document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+  }
+
+  // ドラッグ＆ドロップ実行処理
+  function executeDrop(targetEl, dragInfo) {
+    const targetBox = targetEl.closest('#answerBox, #wordPool');
+    const targetBtn = targetEl.closest('.word-btn');
+
+    if (!targetBox && !targetBtn) return;
+
+    // 元配列から取り出し
+    let word = null;
+    if (dragInfo.source === 'pool') {
+      word = poolWords.splice(dragInfo.index, 1)[0];
+    } else {
+      word = selectedWords.splice(dragInfo.index, 1)[0];
+    }
+
+    // ドロップ先へ挿入
+    if (targetBtn && targetBtn.dataset) {
+      const toSource = targetBtn.dataset.source;
+      const toIndex = parseInt(targetBtn.dataset.index, 10);
+      
+      if (toSource === 'answer') {
+        selectedWords.splice(toIndex, 0, word);
+      } else {
+        poolWords.splice(toIndex, 0, word);
+      }
+    } else if (targetBox) {
+      if (targetBox.id === 'answerBox') {
+        selectedWords.push(word);
+      } else {
+        poolWords.push(word);
+      }
+    }
+
+    renderReorderUI();
   }
 
   function checkReorder() {
@@ -989,7 +977,7 @@
     }
   }
 
-  // --- ③ 英作文テスト処理 ---
+  // --- ③ 英作文テスト ---
   function startCompSession() {
     const countType = document.getElementById('compCountSelect').value;
     const orderType = document.getElementById('compOrderSelect').value;
@@ -1004,14 +992,9 @@
     const wrongCount = getItemWrongCount(q);
 
     document.getElementById('compNum').innerText = `QUESTION ${compIndex + 1} / ${activeSessionQuestions.length}`;
-    
     const badge = document.getElementById('compWrongBadge');
-    if (wrongCount > 0) {
-      badge.style.display = 'inline';
-      badge.innerText = `ミス: ${wrongCount}回`;
-    } else {
-      badge.style.display = 'none';
-    }
+    if (wrongCount > 0) { badge.style.display = 'inline'; badge.innerText = `ミス: ${wrongCount}回`; }
+    else { badge.style.display = 'none'; }
 
     document.getElementById('compJa').innerText = q.ja;
     document.getElementById('compInput').value = '';
