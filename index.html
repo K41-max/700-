@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>英語学習アプリ - 700選トレーナー</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --bg: #f3f4f6;
+      --card: #ffffff;
+      --text: #1f2937;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 700px;
+      width: 100%;
+    }
+    h1 { text-align: center; color: var(--primary); }
+    
+    /* 設定・アップロードエリア */
+    .upload-section {
+      background: var(--card);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* タブ切り替え */
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: #e5e7eb;
+      cursor: pointer;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* カード・表示エリア */
+    .card {
+      background: var(--card);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      margin-bottom: 15px;
+    }
+    .ja-text { font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; }
+    .en-text { font-size: 1.2rem; color: #374151; margin-bottom: 15px; }
+    
+    /* ボタン・入力フォーム */
+    button.btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button.btn:hover { opacity: 0.9; }
+    textarea, input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-size: 1rem;
+    }
+
+    /* 並び替え用ブロック */
+    .word-pool, .answer-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 45px;
+      padding: 10px;
+      border: 2px dashed #ccc;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      background: #fafafa;
+    }
+    .word-btn {
+      background: #e0e7ff;
+      color: #3730a3;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .result-msg { font-weight: bold; margin-top: 10px; }
+    .correct { color: #16a34a; }
+    .incorrect { color: #dc2626; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>English Learning Hub</h1>
+
+  <!-- JSONデータ読み込み -->
+  <div class="upload-section">
+    <label for="jsonFile"><strong>JSONデータをアップロード:</strong></label>
+    <input type="file" id="jsonFile" accept=".json">
+  </div>
+
+  <!-- タブナビゲーション -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('memorize')">① 暗記＆音声</button>
+    <button class="tab-btn" onclick="switchTab('reorder')">② 並び替え</button>
+    <button class="tab-btn" onclick="switchTab('composition')">③ 英作文</button>
+  </div>
+
+  <!-- ① 暗記・一覧・音声モード -->
+  <div id="memorizeTab" class="tab-content">
+    <div id="listContainer"></div>
+  </div>
+
+  <!-- ② 並び替え問題モード -->
+  <div id="reorderTab" class="tab-content" style="display:none;">
+    <div class="card">
+      <div id="reorderJa" class="ja-text">データを選択・アップロードしてください</div>
+      <div id="answerBox" class="answer-box"></div>
+      <div id="wordPool" class="word-pool"></div>
+      <button class="btn" onclick="checkReorder()">判定する</button>
+      <button class="btn" onclick="nextReorderQuestion()" style="background:#6b7280;">次の問題</button>
+      <div id="reorderResult" class="result-msg"></div>
+    </div>
+  </div>
+
+  <!-- ③ 英作文モード -->
+  <div id="compositionTab" class="tab-content" style="display:none;">
+    <div class="card">
+      <div id="compJa" class="ja-text">データを選択・アップロードしてください</div>
+      <textarea id="compInput" rows="3" placeholder="ここに英文を入力してください..."></textarea>
+      <button class="btn" onclick="checkComposition()">答え合わせ</button>
+      <button class="btn" onclick="playAudio(currentData[currentCompIndex].en)">音声を聞く</button>
+      <button class="btn" onclick="nextCompQuestion()" style="background:#6b7280;">次の問題</button>
+      <div id="compResult" class="result-msg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // 初期サンプルデータ（アップロードがなくても動くように一部保持）
+  let currentData = [
+    { id: 1, en: "My house is only five minutes' walk from the station.", ja: "私の家は駅から、ほんの5分の歩行 (所)です。" },
+    { id: 2, en: "My watch may be one or two minutes fast.", ja: "私の時計は1、2分早いかもしれない。" }
+  ];
+
+  let currentReorderIndex = 0;
+  let currentCompIndex = 0;
+  let selectedWords = [];
+
+  // 音声読み上げ機能 (Web Speech API)
+  function playAudio(text) {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // 前の音声をクリア
+      const uttr = new SpeechSynthesisUtterance(text);
+      uttr.lang = 'en-US';
+      uttr.rate = 0.9; // 速度（少しゆっくり）
+      window.speechSynthesis.speak(uttr);
+    } else {
+      alert("お使いのブラウザは音声読み上げに対応していません。");
+    }
+  }
+
+  // JSONファイル読み込み処理
+  document.getElementById('jsonFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      try {
+        const data = JSON.parse(evt.target.result);
+        if (Array.isArray(data)) {
+          currentData = data;
+          alert(`データを読み込みました！（全${data.length}問）`);
+          renderList();
+          loadReorderQuestion(0);
+          loadCompQuestion(0);
+        }
+      } catch (err) {
+        alert("JSONファイルの形式が正しくありません。");
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  // タブ切り替え
+  function switchTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+    
+    if (tabName === 'memorize') {
+      document.getElementById('memorizeTab').style.display = 'block';
+      event.target.classList.add('active');
+    } else if (tabName === 'reorder') {
+      document.getElementById('reorderTab').style.display = 'block';
+      event.target.classList.add('active');
+      loadReorderQuestion(currentReorderIndex);
+    } else if (tabName === 'composition') {
+      document.getElementById('compositionTab').style.display = 'block';
+      event.target.classList.add('active');
+      loadCompQuestion(currentCompIndex);
+    }
+  }
+
+  // ① 暗記一覧の描画
+  function renderList() {
+    const container = document.getElementById('listContainer');
+    container.innerHTML = '';
+    currentData.forEach((item) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="ja-text">No.${item.id} ${item.ja}</div>
+        <div class="en-text">${item.en}</div>
+        <button class="btn" onclick="playAudio('${item.en.replace(/'/g, "\\'")}')">🔊 音声を再生</button>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  // ② 並び替え問題の処理
+  function loadReorderQuestion(index) {
+    if (!currentData.length) return;
+    currentReorderIndex = index % currentData.length;
+    const q = currentData[currentReorderIndex];
+    document.getElementById('reorderJa').innerText = `No.${q.id} ${q.ja}`;
+    document.getElementById('reorderResult').innerText = '';
+    selectedWords = [];
+
+    // 単語をシャッフル
+    const words = q.en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").split(" ");
+    const shuffled = [...words].sort(() => Math.random() - 0.5);
+
+    renderReorderPool(shuffled);
+    renderAnswerBox();
+  }
+
+  function renderReorderPool(words) {
+    const pool = document.getElementById('wordPool');
+    pool.innerHTML = '';
+    words.forEach((word, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'word-btn';
+      btn.innerText = word;
+      btn.onclick = () => {
+        selectedWords.push(word);
+        words.splice(idx, 1);
+        renderReorderPool(words);
+        renderAnswerBox();
+      };
+      pool.appendChild(btn);
+    });
+  }
+
+  function renderAnswerBox() {
+    const box = document.getElementById('answerBox');
+    box.innerHTML = '';
+    selectedWords.forEach((word, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'word-btn';
+      btn.style.background = '#c7d2fe';
+      btn.innerText = word;
+      btn.onclick = () => {
+        selectedWords.splice(idx, 1);
+        // 簡単にするためリセット再読み込み的な挙動
+        renderAnswerBox();
+      };
+      box.appendChild(btn);
+    });
+  }
+
+  function checkReorder() {
+    const target = currentData[currentReorderIndex].en.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").toLowerCase();
+    const userAns = selectedWords.join(" ").toLowerCase();
+    const resDiv = document.getElementById('reorderResult');
+
+    if (target === userAns) {
+      resDiv.className = 'result-msg correct';
+      resDiv.innerText = '⭕️ 正解です！';
+      playAudio(currentData[currentReorderIndex].en);
+    } else {
+      resDiv.className = 'result-msg incorrect';
+      resDiv.innerText = `❌ 不正解... 正解: ${currentData[currentReorderIndex].en}`;
+    }
+  }
+
+  function nextReorderQuestion() {
+    loadReorderQuestion(currentReorderIndex + 1);
+  }
+
+  // ③ 英作文問題の処理
+  function loadCompQuestion(index) {
+    if (!currentData.length) return;
+    currentCompIndex = index % currentData.length;
+    const q = currentData[currentCompIndex];
+    document.getElementById('compJa').innerText = `No.${q.id} ${q.ja}`;
+    document.getElementById('compInput').value = '';
+    document.getElementById('compResult').innerText = '';
+  }
+
+  function checkComposition() {
+    const userVal = document.getElementById('compInput').value.trim().toLowerCase();
+    const targetVal = currentData[currentCompIndex].en.trim().toLowerCase();
+    const resDiv = document.getElementById('compResult');
+
+    if (userVal === targetVal) {
+      resDiv.className = 'result-msg correct';
+      resDiv.innerText = '⭕️ 正解！よくできました。';
+      playAudio(currentData[currentCompIndex].en);
+    } else {
+      resDiv.className = 'result-msg incorrect';
+      resDiv.innerText = `❌ 惜しい！ 正解:\n${currentData[currentCompIndex].en}`;
+    }
+  }
+
+  function nextCompQuestion() {
+    loadCompQuestion(currentCompIndex + 1);
+  }
+
+  // 初期化
+  renderList();
+</script>
+
+</body>
+</html>
